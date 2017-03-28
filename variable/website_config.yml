@@ -1,0 +1,42 @@
+website_title: gdw
+tabs:
+  -
+    title:
+    page:
+  -
+    title:
+    page:
+  -
+    title:
+    page:
+  -
+    title:
+    page:
+  -
+    title:
+    page:
+shops:
+  -
+    name: branch1
+    page:
+    videos:
+      -
+        video_page:
+        image_source:
+        video_info:
+          title:
+          date:
+          description:
+          source:
+          volume:
+        guesses:
+          -
+            video_page:
+            image_source:
+            video_info:
+              title:
+              date:
+              description:
+  -
+    name: branch2
+
