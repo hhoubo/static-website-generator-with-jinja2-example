@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import os
 import logging
 import requests
+import urlparse
 
 ENCODING = 'utf-8'
 WORKDIR = '/home/hou-b/Develop/WorkSpace/sandbox/gdw/'
@@ -29,7 +30,7 @@ def grep_info(video_list_file, is_download):
         description = p[1].get_text(strip=True)
         line = {'title': title.encode(ENCODING),
                 'date': release_date.encode(ENCODING),
-                'description':description.encode(ENCODING),
+                'description': description.encode(ENCODING),
                 'video_source': video_status.get('source'),
                 'available': video_status.get('available')}
         lines.append(line)
@@ -40,18 +41,24 @@ def _grep_video(videp_page_full_name, is_download, download_folder):
     soup = BeautifulSoup(open(videp_page_full_name))
     source = soup.video.source['src'].encode(ENCODING)
     file_name = source.split('/')[-1]
-    if is_download:
-        with open(download_folder + file_name, 'wb') as handle:
-            response = requests.get(source, stream=True)
-            if response.ok:
-                for block in response.iter_content(1024):
-                    handle.write(block)
-                available = True
-            else:
-                available = False
+    if urlparse.urlparse(source).scheme != "":
+        if is_download:
+            with open(download_folder + file_name, 'wb') as handle:
+                response = requests.get(source, stream=True)
+                if response.ok:
+                    for block in response.iter_content(1024):
+                        handle.write(block)
+                    available = True
+                else:
+                    available = False
+        else:
+            response = requests.head(source)
+            available = response.ok
     else:
-        response = requests.head(source)
-        available = response.ok
+        if os.path.isfile(WORKDIR + source):
+            available = True
+        else:
+            available = False
     return {'source': source, 'available': available}
 
 
