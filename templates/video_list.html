@@ -14,9 +14,9 @@
     <div class="cate clearfix">
         {% for tab in tabs %}
             {% if tab.active %}
-                <a href="tab.page" class="cur">tab.title</a>
+                <a href="{{tab.page}}" class="cur">{{tab.title}}</a>
             {% else %}
-                <a href="tab.page">tab.title</a>
+                <a href="{{tab.page}}">{{tab.title}}</a>
             {% endif %}
         {% endfor %}
     </div>
