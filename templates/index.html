@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>{{website_title}}</title>
+<link href="css/reset.css" type="text/css" rel="stylesheet" />
+<link href="css/com.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="wrap">
+  <section>
+    <ul class="shopList">
+      {% for shop in shops %}
+      <li>
+        <h2><a href="{{shop.page}}"><span>■</span>{{shop.name}}</a></h2>
+        <div class="clearfix">
+          <div class="shopImg left"> <a href="{{shop.latest_video_page}}"><img src="{{shop.latest_video_image}}" /></a> </div>
+          <div class="shopInfo right">
+            <h3><a href="{{shop.latest_video_page}}">{{shop.video_info.title}}
+            </a></h3>
+            <p>发布：{{shop.video_info.date}}</p>
+            <p>{{shop.video_info.description}}</p>
+            <p class="more"><a href="{{shop.page}}">更多视频点此处</a></p>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+
+    </ul>
+  </section>
+</div>
+</body>
+</html>

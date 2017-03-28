@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>{{website_title}}</title>
+    <link href="css/reset.css" type="text/css" rel="stylesheet"/>
+    <link href="css/com.css" type="text/css" rel="stylesheet"/>
+    <style>
+        h3 {
+            margin: 10px auto;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="wrap">
+    <h3>{{video_info.title}}</h3>
+    <video id="video1" width="100%" controls autoplay>
+        <source src="{{video_info.source}}" type="video/mp4">
+        您的浏览器不支持 HTML5 video 标签。
+    </video>
+    <p>{{tab.title}} VOL.{{video_info.volume}} {{video_info.date}} {{video_info.description}}
+    </p>
+    <h3>猜你喜欢： </h3>
+    <ul class="shopList">
+        {% for guess in guess_you_like_list %}
+        <li class="mt10">
+            <div class="clearfix">
+                <div class="shopImg left"><a href="{{guess.video_page}}"><img src="{{guess.image_source}}"/></a></div>
+                <div class="shopInfo right">
+                    <h3><a href="{{guess.video_page}}">{{guess.video_info.title}}
+                    </a></h3>
+                    <p>发布：{{guess.video_info.date}}</p>
+                    <p>{{guess.video_info.description}}</p>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

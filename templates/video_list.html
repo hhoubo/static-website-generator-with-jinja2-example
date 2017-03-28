@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>{{website_title}}</title>
+<link href="css/reset.css" type="text/css" rel="stylesheet" />
+<link href="css/com.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="wrap">
+  <section>
+    <div class="cate clearfix">
+        {% for tab in tabs %}
+            {% if tab.active %}
+                <a href="tab.page" class="cur">tab.title</a>
+            {% else %}
+                <a href="tab.page">tab.title</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <h4 style="margin-top:10px">视频内出现的商品和柜台信息均为录制时信息，现在可能有变化，敬请谅解 </h4>
+    <ul class="shopList">
+      <li></li>
+      {% for video in video_list %}
+      <li class="mt10">
+        <div class="clearfix">
+          <div class="shopImg left"> <a href="{{video.video_page}}"><img src="{{video.image_source}}" /></a> </div>
+          <div class="shopInfo right">
+            <h3><a href="{{video.video_page}}">{{video.video_info.title}}
+            </a></h3>
+            <p>发布：{{video.video_info.date}}</p>
+            <p>{{video.video_info.description}}</p>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+<script type="text/javascript" src="js/zepto.js"></script>
+<script type="text/javascript">
+$(function(){
+	$(".cate a").click(function(){
+		$(".cate a").removeClass("cur");
+		$(this).addClass("cur");
+	})
+})
+</script>
+</body>
+</html>
