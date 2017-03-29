@@ -6,10 +6,23 @@ import urlparse
 
 ENCODING = 'utf-8'
 WORKDIR = '/home/hou-b/Develop/WorkSpace/sandbox/gdw/'
-VIDEO_LIST_FILE = '/home/hou-b/Develop/WorkSpace/sandbox/gdw/hengbin.html'
+VIDEO_LIST_FILES = ['/home/hou-b/Develop/WorkSpace/sandbox/gdw/qiao.html',
+                    # '/home/hou-b/Develop/WorkSpace/sandbox/gdw/daban.html',
+                    '/home/hou-b/Develop/WorkSpace/sandbox/gdw/hengbin.html',
+                    # '/home/hou-b/Develop/WorkSpace/sandbox/gdw/jingdu.html',
+                    # '/home/hou-b/Develop/WorkSpace/sandbox/gdw/xinsu.html',
+                    ]
 OUTPUT_FILE = '/home/hou-b/Develop/WorkSpace/sandbox/gdw/info.txt'
-VIDEO_DOWNLOAD = '/home/hou-b/Develop/WorkSpace/sandbox/gdw/hengbin/'
 logger = logging.getLogger(__name__)
+
+
+def make_download_dir(video_list_full_name):
+    short_name = video_list_full_name.split('/')[-1]
+    dir_name = short_name.split('.')[0]
+    directory = os.path.dirname(WORKDIR + dir_name)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    return directory
 
 
 def grep_info(video_list_file, is_download):
@@ -22,7 +35,7 @@ def grep_info(video_list_file, is_download):
         logger.debug('video_page: %s', video_page)
         logger.debug('video_page is exist: %s', os.path.isfile(WORKDIR + video_page))
         if video_page and os.path.isfile(WORKDIR + video_page):
-            video_status = _grep_video(WORKDIR + video_page, is_download, VIDEO_DOWNLOAD)
+            video_status = _grep_video(WORKDIR + video_page, is_download, make_download_dir(video_list_file))
             logger.debug('video status: %s', video_status)
         title = a.get_text(strip=True)
         p = video_info.find_all('p')
@@ -34,7 +47,7 @@ def grep_info(video_list_file, is_download):
                 'video_source': video_status.get('source'),
                 'available': video_status.get('available')}
         lines.append(line)
-    return lines
+    return {'file_name': video_list_file, 'is_download': is_download, 'lines': lines}
 
 
 def _grep_video(videp_page_full_name, is_download, download_folder):
@@ -43,7 +56,7 @@ def _grep_video(videp_page_full_name, is_download, download_folder):
     file_name = source.split('/')[-1]
     if urlparse.urlparse(source).scheme != "":
         if is_download:
-            with open(download_folder + file_name, 'wb') as handle:
+            with open(os.path.join(download_folder + '/', file_name), 'wb') as handle:
                 response = requests.get(source, stream=True)
                 if response.ok:
                     for block in response.iter_content(1024):
@@ -62,21 +75,25 @@ def _grep_video(videp_page_full_name, is_download, download_folder):
     return {'source': source, 'available': available}
 
 
-def write(lines, output_file):
-    output = open(output_file, 'w+')
-    try:
-        for line in lines:
+def write(video_info, output_file):
+    logger.debug(video_info)
+    with open(output_file, 'a+') as output:
+        output.write(video_info['file_name'] + '\n')
+        output.write(
+            'Download the video from CDN\n' if video_info['is_download'] else 'NOT Download the video from CDN\n')
+        for line in video_info['lines']:
             output.write('{0}  {1}  {2} {3} {4}\n'.format(
                 line.get('title'),
                 line.get('date'),
                 line.get('description'),
                 line.get('video_source'),
                 line.get('available')))
-    finally:
-        output.close()
+        output.write('\n')
+
 
 if __name__ == "__main__":
     FORMAT = '%(asctime)s  %(message)s'
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
-    lines = grep_info(VIDEO_LIST_FILE, True)
-    write(lines, OUTPUT_FILE)
+    for video_list_page in VIDEO_LIST_FILES:
+        info = grep_info(video_list_page, False)
+        write(info, OUTPUT_FILE)
